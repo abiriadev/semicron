@@ -1,22 +1,27 @@
 package main
 
 import (
-	"flag"
 	"os"
 	"os/exec"
 
+	"github.com/jessevdk/go-flags"
 	"github.com/robfig/cron/v3"
 )
 
-func main() {
-	flag.Parse()
+type Cfg struct {
+	Sh   string `short:"s" long:"shell" description:"Shell to execute the command"`
+	Args struct {
+		Cron string   `positional-arg-name:"cron"`
+		Cmd  string   `positional-arg-name:"cmd"`
+		Argv []string `positional-arg-name:"arguments"`
+	} `                                                                  positional-args:"yes" required:"yes"`
+}
 
-	crx, cmdName, argv := flag.Arg(0), flag.Arg(1), flag.Args()[2:]
-	if crx == "" {
-		panic("provide cron expression please")
-	}
-	if cmdName == "" {
-		panic("provide command to run please")
+func main() {
+	var cfg Cfg
+	_, err := flags.Parse(&cfg)
+	if err != nil {
+		os.Exit(1)
 	}
 
 	c := cron.New(
@@ -27,13 +32,13 @@ func main() {
 		),
 	)
 
-	resolvedCmdName, err := exec.LookPath(cmdName)
+	resolvedCmdName, err := exec.LookPath(cfg.Args.Cmd)
 	if err != nil {
 		panic(err)
 	}
 
-	_, err = c.AddFunc(crx, func() {
-		cmd := exec.Command(resolvedCmdName, argv...)
+	_, err = c.AddFunc(cfg.Args.Cron, func() {
+		cmd := exec.Command(resolvedCmdName, cfg.Args.Argv...)
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		err := cmd.Run()
