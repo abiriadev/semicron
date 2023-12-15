@@ -30,6 +30,7 @@ func main() {
 	_, err := c.AddFunc(crx, func() {
 		cmd := exec.Command(cmd, argv...)
 		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
 		err := cmd.Run()
 		if err != nil {
 			panic(err)
