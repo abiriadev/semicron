@@ -20,9 +20,12 @@ func main() {
 
 	c := cron.New()
 
-	c.AddFunc(crx, func() {
+	_, err := c.AddFunc(crx, func() {
 		fmt.Println(cmd)
 	})
+	if err != nil {
+		panic(err)
+	}
 
-	c.Start()
+	c.Run()
 }
