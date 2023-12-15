@@ -11,11 +11,11 @@ import (
 func main() {
 	flag.Parse()
 
-	crx, cmd, argv := flag.Arg(0), flag.Arg(1), flag.Args()[2:]
+	crx, cmdName, argv := flag.Arg(0), flag.Arg(1), flag.Args()[2:]
 	if crx == "" {
 		panic("provide cron expression please")
 	}
-	if cmd == "" {
+	if cmdName == "" {
 		panic("provide command to run please")
 	}
 
@@ -27,8 +27,13 @@ func main() {
 		),
 	)
 
-	_, err := c.AddFunc(crx, func() {
-		cmd := exec.Command(cmd, argv...)
+	resolvedCmdName, err := exec.LookPath(cmdName)
+	if err != nil {
+		panic(err)
+	}
+
+	_, err = c.AddFunc(crx, func() {
+		cmd := exec.Command(resolvedCmdName, argv...)
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		err := cmd.Run()
