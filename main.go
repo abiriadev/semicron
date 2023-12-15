@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"os/exec"
+	"os/signal"
 	"strings"
 
 	"github.com/jessevdk/go-flags"
@@ -59,6 +60,14 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, os.Interrupt)
+
+	go func() {
+		<-sig
+		c.Stop()
+	}()
 
 	c.Run()
 }
