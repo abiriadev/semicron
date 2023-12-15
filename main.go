@@ -2,7 +2,8 @@ package main
 
 import (
 	"flag"
-	"fmt"
+	"os"
+	"os/exec"
 
 	"github.com/robfig/cron/v3"
 )
@@ -27,7 +28,12 @@ func main() {
 	)
 
 	_, err := c.AddFunc(crx, func() {
-		fmt.Println(cmd)
+		cmd := exec.Command(cmd)
+		cmd.Stdout = os.Stdout
+		err := cmd.Run()
+		if err != nil {
+			panic(err)
+		}
 	})
 	if err != nil {
 		panic(err)
