@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/jessevdk/go-flags"
 	"github.com/robfig/cron/v3"
@@ -38,7 +39,16 @@ func main() {
 	}
 
 	_, err = c.AddFunc(cfg.Args.Cron, func() {
-		cmd := exec.Command(resolvedCmdName, cfg.Args.Argv...)
+		var cmd *exec.Cmd
+		if cfg.Sh != "" {
+			cmd = exec.Command(
+				cfg.Sh,
+				"-c",
+				strings.Join(append([]string{resolvedCmdName}, cfg.Args.Argv...), " "),
+			)
+		} else {
+			cmd = exec.Command(resolvedCmdName, cfg.Args.Argv...)
+		}
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		err := cmd.Run()
