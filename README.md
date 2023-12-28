@@ -39,6 +39,14 @@ Ping every 15 seconds.
 $ semicron '*/15 * * * * *' ping google.com -- -c 1
 ```
 
+### Today's weather
+
+Show today's weather at 07:00 AM every day.
+
+```sh
+$ semicron '0 7 * * *' curl wttr.in
+```
+
 ### Simple timer
 
 ```sh
@@ -61,4 +69,12 @@ $ semicron '* * * * * *' -s bash figlet '$(date)' -- -w 140
 | |_ | '__| | | | | |/ _ \/ __|   __) | (_) | | | | |__) (_) | '_ (_) |_ \| '_ \  | ' /\___ \ | |     __) | | | |__) | |_ \
 |  _|| |  | | | |_| |  __/ (__   / __/ \__, | | |_| / __/ _| | (_) | ___) | (_) | | . \ ___) || |    / __/| |_| / __/ ___) |
 |_|  |_|  |_| |____/ \___|\___| |_____|  /_/   \___/_____(_)_|\___(_)____/ \___/  |_|\_\____/ |_|   |_____|\___/_____|____/
+```
+
+### GC
+
+Run `git gc` in current working directory every 3 hours.
+
+```sh
+$ semicron '0 */3 * * *' git gc
 ```
