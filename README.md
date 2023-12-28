@@ -31,6 +31,14 @@ Help Options:
 
 ## Examples
 
+### Ping
+
+Ping every 15 seconds.
+
+```sh
+$ semicron '*/15 * * * * *' ping google.com -- -c 1
+```
+
 ### Simple timer
 
 ```sh
